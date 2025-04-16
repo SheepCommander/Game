@@ -2,6 +2,10 @@
 let mCanvas = null;
 let mGL = null;
 
+/**
+ * 
+ * @returns {WebGL2RenderingContext}
+ */
 function get() { return mGL; }
 
 function init(htmlCanvasID) {

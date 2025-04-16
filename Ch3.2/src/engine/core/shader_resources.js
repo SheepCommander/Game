@@ -13,6 +13,10 @@ function init() {
     createShaders();
 }
 
+/**
+ * 
+ * @returns {SimpleShader}
+ */
 function getConstColorShader() { return mConstColorShader; }
 
 export { init, getConstColorShader }
