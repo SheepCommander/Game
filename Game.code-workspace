@@ -18,6 +18,8 @@
       "Ch3.2": true,
       "Ch3.3": true,
       "Ch3.4": true,
+      "Ch3.5": true,
+      "Ch4.1": true,
     },
     "editor.formatOnSave": true, // not needed
   }
