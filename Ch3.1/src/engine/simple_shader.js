@@ -1,6 +1,6 @@
 "use strict";
-import * as core from "./core.js";
-import * as vertexBuffer from "./vertex_buffer.js";
+import * as glSys from "./core/gl.js";
+import * as vertexBuffer from ".core/vertex_buffer.js";
 
 class SimpleShader {
     constructor(vertexShaderID, fragmentShaderID) {
