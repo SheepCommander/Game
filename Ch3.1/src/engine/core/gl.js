@@ -1,7 +1,9 @@
 "use strict"
 let mCanvas = null;
 let mGL = null;
+
 function get() { return mGL; }
+
 function init(htmlCanvasID) {
     mCanvas = document.getElementById(htmlCanvasID);
     if (mCanvas == null)
