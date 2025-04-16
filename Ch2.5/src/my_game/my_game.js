@@ -12,6 +12,6 @@ class MyGame {
     }
 }
 
-window.onload = function() {
+window.onload = function () {
     new MyGame('GLCanvas');
 }

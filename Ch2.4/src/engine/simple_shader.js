@@ -1,3 +1,4 @@
+"use strict";
 import * as core from "./core.js";
 import * as vertexBuffer from "./vertex_buffer.js";
 
@@ -10,13 +11,13 @@ class SimpleShader {
         let gl = core.getGL();
         // Step A: load and compile vertex and fragment shaders
         this.mVertexShader = loadAndCompileShader(vertexShaderID,
-        
-        gl.VERTEX_SHADER);
-        
+
+            gl.VERTEX_SHADER);
+
         this.mFragmentShader = loadAndCompileShader(fragmentShaderID,
-        
-        gl.FRAGMENT_SHADER);
-        
+
+            gl.FRAGMENT_SHADER);
+
         // Step B: Create and link the shaders into a program.
         this.mCompiledShader = gl.createProgram();
         gl.attachShader(this.mCompiledShader, this.mVertexShader);
@@ -29,7 +30,7 @@ class SimpleShader {
         }
         // Step D: reference to aVertexPosition attribute in the shaders
         this.mVertexPositionRef = gl.getAttribLocation(
-        this.mCompiledShader, "aVertexPosition");   
+            this.mCompiledShader, "aVertexPosition");
     }
     activate() {
         let gl = core.getGL();
@@ -37,15 +38,16 @@ class SimpleShader {
         // bind vertex buffer
         gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer.get());
         gl.vertexAttribPointer(this.mVertexPositionRef,
-                3, // each element is a 3-float (x,y.z)
-                gl.FLOAT, // data type is FLOAT
-                false, // if the content is normalized vectors
-                0, // number of bytes to skip in between elements
-                0); // offsets to the first element
+            3, // each element is a 3-float (x,y.z)
+            gl.FLOAT, // data type is FLOAT
+            false, // if the content is normalized vectors
+            0, // number of bytes to skip in between elements
+            0); // offsets to the first element
         gl.enableVertexAttribArray(this.mVertexPositionRef);
     }
 }
-export default SimpleShader;
+
+export default SimpleShader; // exports come after declaration??
 
 function loadAndCompileShader(id, shaderType) {
     let shaderSource = null, compiledShader = null;
@@ -63,7 +65,7 @@ function loadAndCompileShader(id, shaderType) {
     // This is useful for debugging the shaders.
     if (!gl.getShaderParameter(compiledShader, gl.COMPILE_STATUS)) {
         throw new Error("A shader compiling error occurred: " +
-        gl.getShaderInfoLog(compiledShader));
+            gl.getShaderInfoLog(compiledShader));
     }
     return compiledShader;
 }

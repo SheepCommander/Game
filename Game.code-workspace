@@ -1,0 +1,20 @@
+{
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "search.exclude": {},
+    "files.exclude": {
+      "Ch1.1": true,
+      "Ch2.1": true,
+      "Ch2.2": true,
+      "Ch2.3": true,
+      "Ch2.4": true,
+      "Ch2.5": true,
+      "Ch2.6": true,
+    },
+    "editor.formatOnSave": true, // not needed
+  }
+}

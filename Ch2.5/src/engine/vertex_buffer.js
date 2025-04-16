@@ -1,12 +1,12 @@
 "use strict";
 import * as core from "./core.js";
 
+export {init, get}
+
 let mGLVertexBuffer = null;
 function get() { return mGLVertexBuffer; }
 
-// top-right, top-left, bottom-right, bottom-left
 let mVerticesOfSquare = [
-    //X, Y, Z (2d == 0)
     0.5, 0.5, 0.0,
     -0.5, 0.5, 0.0,
     0.5, -0.5, 0.0,
@@ -23,5 +23,3 @@ function init() {
     gl.bufferData(gl.ARRAY_BUFFER,
         new Float32Array(mVerticesOfSquare), gl.STATIC_DRAW);
 }
-
-export { init, get }

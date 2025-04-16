@@ -3,26 +3,26 @@
 This is a comment!
 -->
 <html>
-    <head>
-        <title>TODO supply a title</title>
-    </head>
 
-    <body>
-        <div>TODO write content</div>
-        <canvas id="GLCanvas" width="640" height="480">
-            Your browser does not support the HTML5 canvas.
-        </canvas>
-        <script type="text/javascript">
-            // JavaScript code goes here.
-            "use strict"; // the use of undeclared variables is a run0me error.
-            let canvas = document.getElementById("GLCanvas");
-            let gl = canvas.getContext("webgl2");
-            if (gl !== null) {
-                gl.clearColor(0.0, 0.8, 0.0, 1.0); //0.R 0.G 0.B 0.A
-                gl.clear(gl.COLOR_BUFFER_BIT);
-            }
-            document.write("<br><b>The above is WebGL draw area!</b>");
-            gl.clearColor(1);
-        </script>
-    </body>
+<head>
+    <title>TODO supply a title</title>
+</head>
+
+<body>
+    <div>TODO write content</div>
+    <canvas id="GLCanvas" width="640" height="480">
+        Your browser does not support the HTML5 canvas.
+    </canvas>
+    <script type="text/javascript">
+        "use strict";
+        let canvas = document.getElementById("GLCanvas");
+        let gl = canvas.getContext("webgl2");
+        if (gl !== null) {
+            gl.clearColor(0.0, 0.8, 0.0, 1.0);
+            gl.clear(gl.COLOR_BUFFER_BIT);
+        }
+        document.write("<br><b>The above is WebGL draw area!</b>");
+    </script>
+</body>
+
 </html>

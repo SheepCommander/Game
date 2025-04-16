@@ -3,35 +3,17 @@
 This is a comment!
 -->
 <html>
-    <head>
-        <title>Chapter 2.2</title>
-        <script type="module" src="./src/core.js"></script>
-        <script type="x-shader/x-vertex" id="VertexShader">
-            // this is the vertex shader
-            attribute vec3 aVertexPosition; // Expects one vertex position
-            void main(void) {
-            // Convert the vec3 into vec4 for scan conversion and
-            // assign to gl_Position to pass vertex to
-            // the fragment shader
-            gl_Position = vec4(aVertexPosition, 1.0);
-            }
-            // End of vertex shader
-        </script>
-        <script type="x-shader/x-fragment" id="FragmentShader">
-            // this is the fragment (or pixel) shader
-            void main(void) {
-            // for every pixel called (within the square) sets
-            // constant color white with alpha-channel value of 1.0
-            gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
-            }
-            // End of fragment/pixel shader
-        </script>
-    </head>
 
-    <body>
-        <div>Some content!!!</div>
-        <canvas id="GLCanvas" width="640" height="480">
-            Your browser does not support the HTML5 canvas.
-        </canvas>
-    </body>
+<head>
+    <title>TODO supply a title</title>
+    <script type="module" src="./src/core.js"></script>
+</head>
+
+<body>
+    <div>TODO write content</div>
+    <canvas id="GLCanvas" width="640" height="480">
+        Your browser does not support the HTML5 canvas.
+    </canvas>
+</body>
+
 </html>
