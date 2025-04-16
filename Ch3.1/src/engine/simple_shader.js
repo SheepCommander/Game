@@ -9,14 +9,12 @@ class SimpleShader {
         this.mCompiledShader = null; // ref to compiled shader in webgl
         this.mVertexPositionRef = null; // ref to VertexPosition in shader
         this.mPixelColorRef = null; // pixelColor uniform in fragment shader
-        let gl = core.getGL();
+        let gl = glSys.get();
         // Step A: load and compile vertex and fragment shaders
         this.mVertexShader = loadAndCompileShader(vertexShaderID,
-
             gl.VERTEX_SHADER);
 
         this.mFragmentShader = loadAndCompileShader(fragmentShaderID,
-
             gl.FRAGMENT_SHADER);
 
         // Step B: Create and link the shaders into a program.
@@ -37,7 +35,7 @@ class SimpleShader {
             this.mCompiledShader, "uPixelColor");
     }
     activate(pixelColor) {
-        let gl = core.getGL();
+        let gl = glSys.get();
         gl.useProgram(this.mCompiledShader);
         // bind vertex buffer
         gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer.get());
@@ -57,7 +55,7 @@ export default SimpleShader; // exports come after declaration??
 
 function loadAndCompileShader(filePath, shaderType) {
     let xmlReq, shaderSource = null, compiledShader = null;
-    let gl = core.getGL();
+    let gl = glSys.get();
     // Step A: Request the text from the given file location.
     xmlReq = new XMLHttpRequest();
     xmlReq.open('GET', filePath, false);
