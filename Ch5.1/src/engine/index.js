@@ -35,16 +35,21 @@ function cleanUp() {
 // general utilities
 import Camera from "./camera.js";
 import Transform from "./transform.js";
-import Renderable from "./renderable.js";
-import Scene from "./scene.js";
+import Scene from "./scene.js"
+import * as texture from "./resources/texture.js";
+// Renderables
+import Renderable from "./renderables/renderable.js";
+import TextureRenderable from "./renderables/texture_renderable.js";
 
 export default {
     // resource support
-    audio, text, xml,
+    audio, text, xml, texture,
     // input support
     input,
     // Util classes
-    Scene, Camera, Transform, Renderable,
+    Scene, Camera, Transform,
+    // Renderables
+    Renderable, TextureRenderable,
     // functions
     init, cleanUp, clearCanvas,
 }

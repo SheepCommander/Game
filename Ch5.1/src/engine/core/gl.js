@@ -21,6 +21,11 @@ function init(htmlCanvasID) {
         document.write("<br><b>WebGL 2 is not supported!</b>");
         return;
     }
+    // Allows transparency with textures.
+    mGL.blendFunc(mGL.SRC_ALPHA, mGL.ONE_MINUS_SRC_ALPHA);
+    mGL.enable(mGL.BLEND);
+    // Set images to flip y axis to match the texture coordinate space.
+    mGL.pixelStorei(mGL.UNPACK_FLIP_Y_WEBGL, true);
 }
 function cleanUp() {
     if ((mGL == null) || (mCanvas == null))

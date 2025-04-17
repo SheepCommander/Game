@@ -1,6 +1,6 @@
-import * as glSys from "./core/gl.js";
-import * as shaderResources from "./core/shader_resources.js";
-import Transform from "./transform.js";
+import * as glSys from "../core/gl.js";
+import * as shaderResources from "../core/shader_resources.js";
+import Transform from "../transform.js";
 
 class Renderable {
     constructor() {
@@ -18,6 +18,8 @@ class Renderable {
             camera.getCameraMatrix());
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
+    // this is private/protected
+    _setShader(s) { this.mShader = s; }
 
     setColor(color) { this.mColor = color; }
     getColor() { return this.mColor; }
