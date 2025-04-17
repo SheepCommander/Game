@@ -43,7 +43,7 @@ class BlueLevel extends engine.Scene {
         let deltaX = 0.05;
         /// Move right and swap over
         if (engine.input.isKeyPressed(engine.input.keys.Right)) {
-            engine.audio.playCue(this.mCue, 0.5);
+            if (engine.input.isKeyClicked(engine.input.keys.Right)) engine.audio.playCue(this.mCue, 0.5);
             xform.incXPosBy(deltaX);
             if (xform.getXPos() > 30) { // right-bound of the window
                 xform.setPosition(12, 60);
@@ -51,7 +51,7 @@ class BlueLevel extends engine.Scene {
         }
         // Step A: test for white square movement
         if (engine.input.isKeyPressed(engine.input.keys.Left)) {
-            engine.audio.playCue(this.mCue, 1.0);
+            if (engine.input.isKeyClicked(engine.input.keys.Left)) engine.audio.playCue(this.mCue, 1.0);
             xform.incXPosBy(-deltaX);
             if (xform.getXPos() < 11) { // this is the left-boundary
                 this.next(); // go back to my game

@@ -54,7 +54,7 @@ class MyGame extends engine.Scene {
         let xform = this.mHero.getXform();
         // Support hero movements
         if (engine.input.isKeyPressed(engine.input.keys.Right)) {
-            engine.audio.playCue(this.mCue, 0.5);
+            if (engine.input.isKeyClicked(engine.input.keys.Right)) engine.audio.playCue(this.mCue, 0.5);
             engine.audio.incBackgroundVolume(0.05);
             xform.incXPosBy(deltaX);
             if (xform.getXPos() > 30) { // right-bound of the window
@@ -62,7 +62,7 @@ class MyGame extends engine.Scene {
             }
         }
         if (engine.input.isKeyPressed(engine.input.keys.Left)) {
-            engine.audio.playCue(this.mCue, 1.5);
+            if (engine.input.isKeyClicked(engine.input.keys.Left)) engine.audio.playCue(this.mCue, 1.5);
             engine.audio.incBackgroundVolume(-0.05);
             xform.incXPosBy(-deltaX);
             if (xform.getXPos() < 11) { // left-bound of the window
