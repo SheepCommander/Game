@@ -7,25 +7,23 @@ import SceneFileParser from "./util/scene_file_parser.js";
 class BlueLevel extends engine.Scene {
     constructor() {
         super();
-        // audio clips: supports both mp3 and wav formats
-        this.mBackgroundAudio = "assets/sounds/bg_clip.mp3";
-        this.mCue = "assets/sounds/blue_level_cue.wav";
         // scene file name
-        this.mSceneFile = "assets/blue_level.xml";
+        this.kSceneFile = "assets/blue_level.xml";
+        // textures: (Note: jpg does not support transparency)
+        this.kPortal = "assets/minion_portal.jpg";
+        this.kCollector = "assets/minion_collector.jpg";
         // all squares
         this.mSqSet = []; // these are the Renderable objects
         // The camera to view the scene
         this.mCamera = null;
     }
     init() {
-        let sceneParser = new SceneFileParser(
-            engine.xml.get(this.mSceneFile));
+        let sceneParser = new SceneFileParser(this.kSceneFile);
         // Step A: Read in the camera
         this.mCamera = sceneParser.parseCamera();
-        // Step B: Read all the squares
+        // Step B: Read all the squares and textureSquares
         sceneParser.parseSquares(this.mSqSet);
-        // now start the Background music ...
-        engine.audio.playBackground(this.mBackgroundAudio, 0.5);
+        sceneParser.parseTextureSquares(this.mSqSet);
     }
     draw() {
         // Step A: clear the canvas
@@ -39,39 +37,42 @@ class BlueLevel extends engine.Scene {
     }
     update() {
         // For this very simple game, let's move the first square
-        let xform = this.mSqSet[1].getXform();
+        let xform = this.mSqSet[0].getXform();
         let deltaX = 0.05;
-        /// Move right and swap over
+        // Move right and swap over
         if (engine.input.isKeyPressed(engine.input.keys.Right)) {
-            if (engine.input.isKeyClicked(engine.input.keys.Right)) engine.audio.playCue(this.mCue, 0.5);
             xform.incXPosBy(deltaX);
-            if (xform.getXPos() > 30) { // right-bound of the window
+            if (xform.getXPos() > 30) { // this is the right-bound of the window
                 xform.setPosition(12, 60);
             }
         }
         // Step A: test for white square movement
         if (engine.input.isKeyPressed(engine.input.keys.Left)) {
-            if (engine.input.isKeyClicked(engine.input.keys.Left)) engine.audio.playCue(this.mCue, 1.0);
             xform.incXPosBy(-deltaX);
             if (xform.getXPos() < 11) { // this is the left-boundary
-                this.next(); // go back to my game
+                this.next();
             }
         }
-        if (engine.input.isKeyPressed(engine.input.keys.Q))
-            this.stop(); // Quit the game
+        // continuously change texture tinting
+        let c = this.mSqSet[1].getColor();
+        let ca = c[3] + deltaX;
+        if (ca > 1) {
+            ca = 0;
+        }
+        c[3] = ca;
     }
     load() {
-        engine.xml.load(this.mSceneFile);
-        engine.audio.load(this.mBackgroundAudio);
-        engine.audio.load(this.mCue);
+        // load the scene file
+        engine.xml.load(this.kSceneFile);
+        // load the textures
+        engine.texture.load(this.kPortal);
+        engine.texture.load(this.kCollector);
     }
     unload() {
-        // stop the background audio
-        engine.audio.stopBackground();
         // unload the scene file and loaded resources
-        engine.xml.unload(this.mSceneFile);
-        engine.audio.unload(this.mBackgroundAudio);
-        engine.audio.unload(this.mCue);
+        engine.xml.unload(this.kSceneFile);
+        engine.texture.unload(this.kPortal);
+        engine.texture.unload(this.kCollector);
     }
     next() {
         super.next();

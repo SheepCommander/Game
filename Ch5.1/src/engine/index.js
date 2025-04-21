@@ -8,6 +8,7 @@ import * as input from "./input.js";
 import * as text from "./resources/text.js";
 import * as xml from "./resources/xml.js";
 import * as audio from "./resources/audio.js";
+import * as texture from "./resources/texture.js";
 // general engine utilities
 function init(htmlCanvasID) {
     glSys.init(htmlCanvasID);
@@ -35,16 +36,20 @@ function cleanUp() {
 // general utilities
 import Camera from "./camera.js";
 import Transform from "./transform.js";
-import Renderable from "./renderable.js";
 import Scene from "./scene.js";
+// Renderables
+import Renderable from "./renderables/renderable.js";
+import TextureRenderable from "./renderables/texture_renderable.js";
 
 export default {
     // resource support
-    audio, text, xml,
+    audio, text, xml, texture,
     // input support
     input,
     // Util classes
-    Scene, Camera, Transform, Renderable,
+    Scene, Camera, Transform,
+    // Renderables
+    Renderable, TextureRenderable,
     // functions
     init, cleanUp, clearCanvas,
 }
