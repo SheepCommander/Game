@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 import * as input from "../input.js";
 import * as map from "./resource_map.js";
 

@@ -1,3 +1,4 @@
+"use strict";
 import * as glSys from "./core/gl.js";
 
 class Camera {

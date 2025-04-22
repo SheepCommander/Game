@@ -1,3 +1,4 @@
+"use strict";
 /**
  * Reference counting of loaded resources.
  */

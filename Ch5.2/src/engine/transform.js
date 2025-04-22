@@ -1,3 +1,4 @@
+"use strict";
 class Transform {
     constructor() {
         this.mPosition = vec2.fromValues(0, 0); // translation

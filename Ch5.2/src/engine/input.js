@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 // Previous key state
 var mKeyPreviousState = [];
 // The pressed keys.

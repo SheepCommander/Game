@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 import * as map from "../core/resource_map.js";
 // functions from resource_map
 let unload = map.unload;

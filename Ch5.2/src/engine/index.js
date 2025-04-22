@@ -1,3 +1,4 @@
+"use strict";
 // local to this file only
 import * as glSys from "./core/gl.js";
 import * as vertexBuffer from "./core/vertex_buffer.js";

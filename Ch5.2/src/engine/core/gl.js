@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 /**@type {HTMLCanvasElement}*/
 let mCanvas = null;
 /**@type {WebGL2RenderingContext}*/

@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 import * as shaderResources from "../core/shader_resources.js";
 import Renderable from "./renderable.js";
 import * as texture from "../resources/texture.js";
