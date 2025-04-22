@@ -1,6 +1,5 @@
 // import from engine/index.js for all engine symbols
 import engine from "../engine/index.js";
-import BlueLevel from "./blue_level.js";
 
 class MyGame extends engine.Scene {
     constructor() {
@@ -15,7 +14,8 @@ class MyGame extends engine.Scene {
         this.mPortal = null;
         this.mCollector = null;
         this.mFontImage = null;
-        this.mMinion = null;
+        this.mLeftMinion = null;
+        this.mRightMinion = null;
     }
     load() {
         // loads the textures
@@ -51,10 +51,32 @@ class MyGame extends engine.Scene {
         this.mFontImage.setColor([1, 1, 1, 0]);
         this.mFontImage.getXform().setPosition(13, 62);
         this.mFontImage.getXform().setSize(4, 4);
-        this.mMinion = new engine.SpriteRenderable(this.kMinionSprite);
-        this.mMinion.setColor([1, 1, 1, 0]);
-        this.mMinion.getXform().setPosition(26, 56);
-        this.mMinion.getXform().setSize(5, 2.5);
+        // The right minion
+        this.mRightMinion = new engine.SpriteAnimateRenderable(
+            this.kMinionSprite);
+        this.mRightMinion.setColor([1, 1, 1, 0]);
+        this.mRightMinion.getXform().setPosition(26, 56.5);
+        this.mRightMinion.getXform().setSize(4, 3.2);
+        this.mRightMinion.setSpriteSequence(
+            512, 0, // first element pixel positions: top: 512 left: 0
+            204, 164, // widthxheight in pixels
+            5, // number of elements in this sequence
+            0); // horizontal padding in between
+        this.mRightMinion.setAnimationType(engine.eAnimationType.eRight);
+        this.mRightMinion.setAnimationSpeed(50);
+        // the left minion
+        this.mLeftMinion = new engine.SpriteAnimateRenderable(
+            this.kMinionSprite);
+        this.mLeftMinion.setColor([1, 1, 1, 0]);
+        this.mLeftMinion.getXform().setPosition(15, 56.5);
+        this.mLeftMinion.getXform().setSize(4, 3.2);
+        this.mLeftMinion.setSpriteSequence(
+            348, 0, // first element pixel positions: top: 164 left: 0
+            204, 164, // widthxheight in pixels
+            5, // number of elements in this sequence
+            0); // horizontal padding in between
+        this.mLeftMinion.setAnimationType(engine.eAnimationType.eRight);
+        this.mLeftMinion.setAnimationSpeed(50);
         // Step D: Create hero object with texture from lower-left corner
         this.mHero = new engine.SpriteRenderable(this.kMinionSprite);
         this.mHero.setColor([1, 1, 1, 0]);
@@ -72,7 +94,8 @@ class MyGame extends engine.Scene {
         this.mCollector.draw(this.mCamera);
         this.mHero.draw(this.mCamera);
         this.mFontImage.draw(this.mCamera);
-        this.mMinion.draw(this.mCamera);
+        this.mLeftMinion.draw(this.mCamera);
+        this.mRightMinion.draw(this.mCamera);
     }
     update() {
         // let's only allow the movement of hero,
@@ -123,35 +146,37 @@ class MyGame extends engine.Scene {
             b,
             texCoord[engine.eTexCoordArrayIndex.eTop]
         );
-        //
-        // The minion image:
-        // For minion: zoom to the bottom right corner by changing top left
-        texCoord = this.mMinion.getElementUVCoordinateArray();
-        // The 8 elements:
-        // mTexRight, mTexTop, // x,y of top-right
-        // mTexLeft, mTexTop,
-        // mTexRight, mTexBottom,
-        // mTexLeft, mTexBottom
-        let t = texCoord[engine.eTexCoordArrayIndex.eTop] - deltaT;
-        let l = texCoord[engine.eTexCoordArrayIndex.eLeft] + deltaT;
-        if (l > 0.5) {
-            l = 0;
+        // remember to update the minion's animation
+        this.mRightMinion.updateAnimation();
+        this.mLeftMinion.updateAnimation();
+        // Animate left on the sprite sheet
+        if (engine.input.isKeyClicked(engine.input.keys.One)) {
+            this.mRightMinion.setAnimationType(engine.eAnimationType.eLeft);
+            this.mLeftMinion.setAnimationType(engine.eAnimationType.eLeft);
         }
-        if (t < 0.5) {
-            t = 1.0;
+        // swing animation
+        if (engine.input.isKeyClicked(engine.input.keys.Two)) {
+            this.mRightMinion.setAnimationType(engine.eAnimationType.eSwing);
+            this.mLeftMinion.setAnimationType(engine.eAnimationType.eSwing);
         }
-        this.mMinion.setElementUVCoordinate(
-            l,
-            texCoord[engine.eTexCoordArrayIndex.eRight],
-            texCoord[engine.eTexCoordArrayIndex.eBottom],
-            t
-        );
+        // Animate right on the sprite sheet
+        if (engine.input.isKeyClicked(engine.input.keys.Three)) {
+            this.mRightMinion.setAnimationType(engine.eAnimationType.eRight);
+            this.mLeftMinion.setAnimationType(engine.eAnimationType.eRight);
+        }
+        // decrease duration of each sprite element to speed up animation
+        if (engine.input.isKeyClicked(engine.input.keys.Four)) {
+            this.mRightMinion.incAnimationSpeed(-2);
+            this.mLeftMinion.incAnimationSpeed(-2);
+        }
+        // increase duration of each sprite element to slow down animation
+        if (engine.input.isKeyClicked(engine.input.keys.Five)) {
+            this.mRightMinion.incAnimationSpeed(2);
+            this.mLeftMinion.incAnimationSpeed(2);
+        }
     }
     next() {
         super.next(); // this must be called!
-        // starts the next level
-        let nextLevel = new BlueLevel(); // next level to be loaded
-        nextLevel.start();
     }
 }
 export default MyGame;
