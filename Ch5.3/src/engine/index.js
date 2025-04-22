@@ -41,6 +41,10 @@ import Scene from "./scene.js";
 // Renderables
 import Renderable from "./renderables/renderable.js";
 import TextureRenderable from "./renderables/texture_renderable.js";
+import SpriteRenderable from "./renderables/sprite_renderable.js";
+import SpriteAnimateRenderable from "./renderables/sprite_animate_renderable.js";
+import { eTexCoordArrayIndex } from "./renderables/sprite_renderable.js";
+import { eAnimationType } from "./renderables/sprite_animate_renderable.js";
 
 export default {
     // resource support
@@ -51,6 +55,9 @@ export default {
     Scene, Camera, Transform,
     // Renderables
     Renderable, TextureRenderable,
+    SpriteRenderable, SpriteAnimateRenderable,
+    // constants
+    eTexCoordArrayIndex, eAnimationType,
     // functions
     init, cleanUp, clearCanvas,
 }
