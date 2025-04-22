@@ -26,6 +26,7 @@
       "Ch4.5": true,
       "Ch4.6": true,
       "Ch5.1": true,
+      "Ch5.1 Project": true,
     },
     "editor.formatOnSave": true, // not needed
   }
