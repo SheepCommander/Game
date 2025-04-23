@@ -33,6 +33,7 @@
       "Ch6.2": true,
       "Ch6.3": true,
       "Ch6.4": true,
+      "Ch6.5": true,
     },
     "editor.formatOnSave": true, // not needed
   }
