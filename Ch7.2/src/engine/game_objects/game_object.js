@@ -1,7 +1,7 @@
 "use strict";
 
 import Renderable from "../renderables/renderable.js"; // only for intellisense
-import BoundingBox from "../bounding_box.js";
+import BoundingBox from "../utils/bounding_box.js";
 
 class GameObject {
     /**

@@ -1,5 +1,6 @@
-"use strict";
-import engine from "../../engine/index.js"; // Needed for almost all client code
+"use strict";  // Operate in Strict mode such that variables must be declared before used!
+
+import engine from "../../engine/index.js";
 
 class Brain extends engine.GameObject {
     constructor(spriteTexture) {
@@ -7,16 +8,17 @@ class Brain extends engine.GameObject {
         this.kDeltaDegree = 1;
         this.kDeltaRad = Math.PI * this.kDeltaDegree / 180;
         this.kDeltaSpeed = 0.01;
-        this.mRenderComponent =
-            new engine.SpriteRenderable(spriteTexture);
+        this.mRenderComponent = new engine.SpriteRenderable(spriteTexture);
         this.mRenderComponent.setColor([1, 1, 1, 0]);
         this.mRenderComponent.getXform().setPosition(50, 10);
         this.mRenderComponent.getXform().setSize(3, 5.4);
         this.mRenderComponent.setElementPixelPositions(600, 700, 0, 180);
-        this.setSpeed(0.05);
+
+        this.setSpeed(0.3);
     }
+
     update() {
-        super.update();
+        GameObject.update();
         let xf = this.getXform();
         let fdir = this.getCurrentFrontDir();
         if (engine.input.isKeyPressed(engine.input.keys.Left)) {
@@ -35,4 +37,5 @@ class Brain extends engine.GameObject {
         }
     }
 }
+
 export default Brain;

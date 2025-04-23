@@ -1,7 +1,7 @@
 "use strict";
 import * as glSys from "../core/gl.js";
 import * as shaderResources from "../core/shader_resources.js";
-import Transform from "../transform.js";
+import Transform from "../utils/transform.js";
 
 class Renderable {
     constructor() {
