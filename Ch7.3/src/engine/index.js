@@ -24,6 +24,9 @@ import BoundingBox from "./utils/bounding_box.js";
 import { eBoundCollideStatus } from "./utils/bounding_box.js";
 import Lerp from "./utils/lerp.js";
 import LerpVec2 from "./utils/lerp_vec2.js";
+import Oscillate from "./utils/oscillate.js";
+import Shake from "./utils/shake.js";
+import ShakeVec2 from "./utils/shake_vec2.js";
 
 // camera and related supports
 import Camera from "./cameras/camera.js";
@@ -82,7 +85,7 @@ export default {
     input,
 
     // general utils 
-    Lerp, LerpVec2,
+    Lerp, LerpVec2, Oscillate, Shake, ShakeVec2,
 
     // Util classes
     Camera, Scene, Transform, BoundingBox,

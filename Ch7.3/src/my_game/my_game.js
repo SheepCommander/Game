@@ -73,6 +73,10 @@ class MyGame extends engine.Scene {
         this.mMsg.setColor([1, 1, 1, 1]);
         this.mMsg.getXform().setPosition(1, 2);
         this.mMsg.setTextHeight(3);
+
+        // create an Oscillate object to simulate motion
+        this.mBounce = new engine.Oscillate(2, 6, 120);
+        // delta, freq, duration
     }
 
     // This is the draw function, make sure to setup proper drawing environment, and more
@@ -158,6 +162,18 @@ class MyGame extends engine.Scene {
         this.mCamera.clampAtBoundary(this.mPortal.getXform(), 0.8);
         this.mCamera.panWith(this.mHero.getXform(), 0.9);
 
+        this.mMsg.setText(msg + this.mChoice);
+
+        if (engine.input.isKeyClicked(engine.input.keys.Q)) {
+            if (!this.mCamera.reShake())
+                this.mCamera.shake([6, 1], [10, 3], 60);
+            // also re-start bouncing effect
+            this.mBounce.reStart();
+        }
+        if (!this.mBounce.done()) {
+            let d = this.mBounce.getNext();
+            this.mHero.getXform().incXPosBy(d);
+        }
         this.mMsg.setText(msg + this.mChoice);
     }
 }

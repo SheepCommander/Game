@@ -8,6 +8,7 @@
 import * as glSys from "../core/gl.js";
 import BoundingBox from "../utils/bounding_box.js";
 import { eBoundCollideStatus } from "../utils/bounding_box.js";
+import CameraShake from "./camera_shake.js";
 
 import CameraState from "./camera_state.js";
 
@@ -32,6 +33,7 @@ class Camera {
     //
     constructor(wcCenter, wcWidth, viewportArray) {
         this.mCameraState = new CameraState(wcCenter, wcWidth);
+        this.mCameraShake = null;
 
         this.mViewport = viewportArray;  // [x, y, width, height]
 
@@ -87,8 +89,12 @@ class Camera {
         gl.disable(gl.SCISSOR_TEST);
 
         // Step B: Compute the Camera Matrix
-        let center = this.getWCCenter();
-
+        let center = [];
+        if (this.mCameraShake !== null) {
+            center = this.mCameraShake.getCenter();
+        } else {
+            center = this.getWCCenter();
+        }
         // Step B1: following the translation, scale to: (-1, -1) to (1, 1): a 2x2 square at origin
         mat4.scale(this.mCameraMatrix, mat4.create(), vec3.fromValues(2.0 / this.getWCWidth(), 2.0 / this.getWCHeight(), 1.0));
 

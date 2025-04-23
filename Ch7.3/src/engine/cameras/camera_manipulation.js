@@ -7,8 +7,17 @@
 
 import { eBoundCollideStatus } from "../utils/bounding_box.js";
 import Camera from "./camera_main.js";
+import CameraShake from "./camera_shake.js";
 
 Camera.prototype.update = function () {
+    if (this.mCameraShake !== null) {
+        if (this.mCameraShake.done()) {
+            this.mCameraShake = null;
+        } else {
+            this.mCameraShake.setRefCenter(this.getWCCenter());
+            this.mCameraShake.update();
+        }
+    }
     this.mCameraState.update();
 }
 
@@ -74,5 +83,18 @@ Camera.prototype.zoomTowards = function (pos, zoom) {
     this.zoomBy(zoom);
     this.mCameraState.setCenter(newC);
 }
+
+Camera.prototype.shake = function (deltas, freqs, duration) {
+    this.mCameraShake = new CameraShake(this.mCameraState,
+        deltas, freqs, duration);
+}
+// Restart the shake
+Camera.prototype.reShake = function () {
+    let success = (this.mCameraShake !== null);
+    if (success)
+        this.mCameraShake.reShake();
+    return success;
+}
+
 
 export default Camera;
