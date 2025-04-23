@@ -53,6 +53,21 @@ class MyGame extends engine.Scene {
         );
         this.mCamera.setBackgroundColor([0.8, 0.8, 0.8, 1]);
         // sets the background to gray
+        this.mHeroCam = new engine.Camera(
+            vec2.fromValues(50, 30), // update each cycle to point to hero
+            20,
+            [490, 330, 150, 150],
+            2 // viewport bounds
+        );
+        this.mHeroCam.setBackgroundColor([0.5, 0.5, 0.5, 1]);
+        this.mBrainCam = new engine.Camera(
+            vec2.fromValues(50, 30), // update each cycle to point to brain
+            10,
+            [0, 330, 150, 150],
+            2 // viewport bounds
+        );
+        this.mBrainCam.setBackgroundColor([1, 1, 1, 1]);
+        this.mBrainCam.configLerp(0.7, 10);
 
         // Large background image
         let bgR = new engine.SpriteRenderable(this.kBg);
@@ -84,26 +99,20 @@ class MyGame extends engine.Scene {
     draw() {
         // Step A: clear the canvas
         engine.clearCanvas([0.9, 0.9, 0.9, 1.0]); // clear to light gray
-
-        // Step  B: Draw with all three cameras
-        this.mCamera.setViewAndCameraMatrix();
-
-        // Step C: Draw everything
-        this.mBg.draw(this.mCamera);
-        this.mHero.draw(this.mCamera);
-        this.mBrain.draw(this.mCamera);
-        this.mPortal.draw(this.mCamera);
-        this.mLMinion.draw(this.mCamera);
-        this.mRMinion.draw(this.mCamera);
-        this.mMsg.draw(this.mCamera);
+        // Step B: Draw with all three cameras
+        this._drawCamera(this.mCamera);
+        this.mMsg.draw(this.mCamera); // only draw status in main camera
+        this._drawCamera(this.mHeroCam);
+        this._drawCamera(this.mBrainCam);
     }
     // The update function, updates the application state. Make sure to _NOT_ draw
     // anything from this function!
     update() {
         let zoomDelta = 0.05;
         let msg = "L/R: Left or Right Minion; H: Dye; P: Portal]: ";
-
         this.mCamera.update();  // for smoother camera movements
+        this.mHeroCam.update();
+        this.mBrainCam.update();
 
         this.mLMinion.update();  // for sprite animation
         this.mRMinion.update();
@@ -174,7 +183,28 @@ class MyGame extends engine.Scene {
             let d = this.mBounce.getNext();
             this.mHero.getXform().incXPosBy(d);
         }
+        // set the hero and brain cams
+        this.mHeroCam.panTo(this.mHero.getXform().getXPos(),
+            this.mHero.getXform().getYPos());
+        this.mBrainCam.panTo(this.mBrain.getXform().getXPos(),
+            this.mBrain.getXform().getYPos());
+        // Move the hero cam viewport just to show it is possible
+        let v = this.mHeroCam.getViewport();
+        v[0] += 1;
+        if (v[0] > 500) {
+            v[0] = 0;
+        }
+        this.mHeroCam.setViewport(v);
         this.mMsg.setText(msg + this.mChoice);
+    }
+    _drawCamera(camera) {
+        camera.setViewAndCameraMatrix();
+        this.mBg.draw(camera);
+        this.mHero.draw(camera);
+        this.mBrain.draw(camera);
+        this.mPortal.draw(camera);
+        this.mLMinion.draw(camera);
+        this.mRMinion.draw(camera);
     }
 }
 

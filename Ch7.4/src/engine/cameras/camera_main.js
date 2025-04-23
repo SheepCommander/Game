@@ -31,12 +31,16 @@ class Camera {
     //      
     //  wcHeight = wcWidth * viewport[3]/viewport[2]
     //
-    constructor(wcCenter, wcWidth, viewportArray) {
+    constructor(wcCenter, wcWidth, viewportArray, bound) {
         this.mCameraState = new CameraState(wcCenter, wcWidth);
         this.mCameraShake = null;
-
-        this.mViewport = viewportArray;  // [x, y, width, height]
-
+        this.mViewport = []; // [x, y, width, height]
+        this.mViewportBound = 0;
+        if (bound !== undefined) {
+            this.mViewportBound = bound;
+        }
+        this.mScissorBound = []; // use for bounds
+        this.setViewport(viewportArray, this.mViewportBound);
         // Camera transform operator
         this.mCameraMatrix = mat4.create();
 
@@ -58,8 +62,28 @@ class Camera {
         return this.mCameraState.getWidth() * ratio;
     }
 
-    setViewport(viewportArray) { this.mViewport = viewportArray; }
-    getViewport() { return this.mViewport; }
+    setViewport(viewportArray, bound) {
+        if (bound === undefined) {
+            bound = this.mViewportBound;
+        }
+        // [x, y, width, height]
+        this.mViewport[0] = viewportArray[0] + bound;
+        this.mViewport[1] = viewportArray[1] + bound;
+        this.mViewport[2] = viewportArray[2] - (2 * bound);
+        this.mViewport[3] = viewportArray[3] - (2 * bound);
+        this.mScissorBound[0] = viewportArray[0];
+        this.mScissorBound[1] = viewportArray[1];
+        this.mScissorBound[2] = viewportArray[2];
+        this.mScissorBound[3] = viewportArray[3];
+    }
+    getViewport() {
+        let out = [];
+        out[0] = this.mScissorBound[0];
+        out[1] = this.mScissorBound[1];
+        out[2] = this.mScissorBound[2];
+        out[3] = this.mScissorBound[3];
+        return out;
+    }
 
     setBackgroundColor(newColor) { this.mBGColor = newColor; }
     getBackgroundColor() { return this.mBGColor; }
@@ -75,11 +99,11 @@ class Camera {
             this.mViewport[1],  // y position of bottom-left corner of the area to be drawn
             this.mViewport[2],  // width of the area to be drawn
             this.mViewport[3]); // height of the area to be drawn
-        // Step A2: set up the corresponding scissor area to limit the clear area
-        gl.scissor(this.mViewport[0], // x position of bottom-left corner of the area to be drawn
-            this.mViewport[1], // y position of bottom-left corner of the area to be drawn
-            this.mViewport[2], // width of the area to be drawn
-            this.mViewport[3]);// height of the area to be drawn
+        // Step A2: set up corresponding scissor area to limit clear area
+        gl.scissor(this.mScissorBound[0], // x of bottom-left corner
+            this.mScissorBound[1], // y position of bottom-left corner
+            this.mScissorBound[2], // width of the area to be drawn
+            this.mScissorBound[3]);// height of the area to be drawn
 
         // Step A3: set the color to be clear
         gl.clearColor(this.mBGColor[0], this.mBGColor[1], this.mBGColor[2], this.mBGColor[3]);  // set the color to be cleared
