@@ -1,6 +1,6 @@
 "use strict";
-import * as glSys from "./core/gl.js";
-import BoundingBox from "./bounding_box.js"
+import * as glSys from "../core/gl.js";
+import BoundingBox from "../bounding_box.js"
 import { eBoundCollideStatus } from "../bounding_box.js";
 
 class Camera {
@@ -82,22 +82,22 @@ class Camera {
             let pos = aXform.getPosition();
             if ((status & eBoundCollideStatus.eCollideTop) !== 0) {
                 pos[1] = (this.getWCCenter())[1] +
-                    (zone * this.getWCHeight() / 2) –
-                (aXform.getHeight() / 2);
+                    (zone * this.getWCHeight() / 2) -
+                    (aXform.getHeight() / 2);
             }
             if ((status & eBoundCollideStatus.eCollideBottom) !== 0) {
-                pos[1] = (this.getWCCenter())[1] –
-                (zone * this.getWCHeight() / 2) +
+                pos[1] = (this.getWCCenter())[1] -
+                    (zone * this.getWCHeight() / 2) +
                     (aXform.getHeight() / 2);
             }
             if ((status & eBoundCollideStatus.eCollideRight) !== 0) {
                 pos[0] = (this.getWCCenter())[0] +
-                    (zone * this.getWCWidth() / 2) –
-                (aXform.getWidth() / 2);
+                    (zone * this.getWCWidth() / 2) -
+                    (aXform.getWidth() / 2);
             }
             if ((status & eBoundCollideStatus.eCollideLeft) !== 0) {
-                pos[0] = (this.getWCCenter())[0] –
-                (zone * this.getWCWidth() / 2) +
+                pos[0] = (this.getWCCenter())[0] -
+                    (zone * this.getWCWidth() / 2) +
                     (aXform.getWidth() / 2);
             }
         }
