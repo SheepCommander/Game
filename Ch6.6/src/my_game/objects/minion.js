@@ -1,6 +1,11 @@
 "use strict";
 import engine from "../../engine/index.js";
 class Minion extends engine.GameObject {
+    /**
+     * 
+     * @param {*} spriteTexture 
+     * @param {number} atY Y position
+     */
     constructor(spriteTexture, atY) {
         super(null);
         this.kDelta = 0.2;

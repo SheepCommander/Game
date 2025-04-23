@@ -11,7 +11,6 @@ import TextureObject from "./objects/texture_object.js";
 /**
 Arrow and P keys: Move and rotate the Portal minion
 WASD keys: Move the Hero
-L, R, H, B keys: Select the target for colliding with the Portal minion
  */
 class MyGame extends engine.Scene {
     constructor() {
@@ -19,15 +18,19 @@ class MyGame extends engine.Scene {
         // textures:
         this.kFontImage = "assets/fonts/system_default_font.png";
         this.kMinionSprite = "assets/minion_sprite.png";
-        this.kMinionCollector = "assets/minion_collector.png";
         this.kMinionPortal = "assets/minion_portal.png";
         // The camera to view the scene
         this.mCamera = null;
         // the hero and the support objects
+        this.mHero = null;
         this.mDyePack = null;
-        this.mMsg = null;
-        this.mCollector = null;
         this.mPortal = null;
+        this.mBrain = null;
+        this.mLeftMinion = null;
+        this.mRightMinion = null;
+        this.mMsg = null;
+        // extra
+        this.mTarget = null;
     }
     init() {
         // Step A: set up the cameras
@@ -36,17 +39,20 @@ class MyGame extends engine.Scene {
             100, // width of camera
             [0, 0, 640, 480] // viewport (orgX, orgY, width, height)
         );
-        this.mCamera.setBackgroundColor([0.8, 0.8, 0.8, 1]);
-        // sets the background to gray
-        this.mDyePack = new DyePack(this.kMinionSprite);
+        this.mCamera.setBackgroundColor([0.8, 0.8, 0.8, 1]);//gray bg
+        this.mHero = new Hero(this.kMinionSprite); // hero
+        this.mDyePack = new DyePack(this.kMinionSprite); // dyepack
         this.mDyePack.setVisibility(false);
-        this.mCollector = new TextureObject(this.kMinionCollector,
-            50, 30, 30, 30);
-        this.mPortal = new TextureObject(this.kMinionPortal, 70, 30, 10, 10);
-        this.mMsg = new engine.FontRenderable("Status Message");
+        this.mPortal = new TextureObject(this.kMinionPortal, 70, 30, 10, 10); // portal
+        this.mBrain = new Brain(this.kMinionSprite); // brain
+        this.mLeftMinion = new Minion(this.kMinionSprite, 50);
+        this.mRightMinion = new Minion(this.kMinionSprite, 50);
+        this.mMsg = new engine.FontRenderable("Status Message"); // msg
         this.mMsg.setColor([0, 0, 0, 1]);
         this.mMsg.getXform().setPosition(1, 2);
         this.mMsg.setTextHeight(3);
+
+        this.mTarget = this.mHero;
     }
     draw() {
         // Step A: clear the canvas
@@ -54,44 +60,54 @@ class MyGame extends engine.Scene {
         // Step B: Activate the drawing Camera
         this.mCamera.setViewAndCameraMatrix();
         // Step C: Draw everything
+        this.mHero.draw(this.mCamera);
         this.mDyePack.draw(this.mCamera);
-        this.mMsg.draw(this.mCamera);
-        this.mCollector.draw(this.mCamera);
         this.mPortal.draw(this.mCamera);
+        this.mBrain.draw(this.mCamera);
+        this.mLeftMinion.draw(this.mCamera);
+        this.mRightMinion.draw(this.mCamera);
+        this.mMsg.draw(this.mCamera);
     }
     load() {
         // Step A: loads the textures
         engine.texture.load(this.kFontImage);
         engine.texture.load(this.kMinionSprite);
-        engine.texture.load(this.kMinionCollector);
         engine.texture.load(this.kMinionPortal);
     }
     unload() {
         engine.texture.unload(this.kFontImage);
         engine.texture.unload(this.kMinionSprite);
-        engine.texture.unload(this.kMinionCollector);
         engine.texture.unload(this.kMinionPortal);
     }
     update() {
         let msg = "No Collision";
-        this.mCollector.update(engine.input.keys.W, engine.input.keys.S,
-            engine.input.keys.A, engine.input.keys.D);
         this.mPortal.update(engine.input.keys.Up, engine.input.keys.Down,
             engine.input.keys.Left, engine.input.keys.Right);
+        this.mHero.update(engine.input.keys.W, engine.input.keys.S,
+            engine.input.keys.A, engine.input.keys.D);
+        this.mLeftMinion.update();
+        this.mRightMinion.update();
+        this.mBrain.update();
         // rotate smaller Portal minion with P
         if (engine.input.isKeyClicked(engine.input.keys.P)) {
             this.mPortal.getXform().incRotationByDegree(5);
         }
-        // rotate bigger Collector minion with E
-        if (engine.input.isKeyClicked(engine.input.keys.E)) {
-            this.mCollector.getXform().incRotationByDegree(5);
+        // L, R, H, B keys: Select the target for colliding with the Portal minion
+        if (engine.input.isKeyClicked(engine.input.keys.L)) {
+            this.mTarget = this.mLeftMinion;
+        }
+        if (engine.input.isKeyClicked(engine.input.keys.R)) {
+            this.mTarget = this.mRightMinion;
+        }
+        if (engine.input.isKeyClicked(engine.input.keys.H)) {
+            this.mTarget = this.mHero;
+        }
+        if (engine.input.isKeyClicked(engine.input.keys.B)) {
+            this.mTarget = this.mBrain;
         }
 
         let h = [];
-        // Portal's resolution is 1/16 x 1/16 that of Collector!
-        // VERY EXPENSIVE!!
-        // if (this.mCollector.pixelTouches(this.mPortal, h)) {
-        if (this.mPortal.pixelTouches(this.mCollector, h)) {
+        if (this.mPortal.pixelTouches(this.mTarget, h)) {
             msg = "Collided!: (" + h[0].toPrecision(4) + " " +
                 h[1].toPrecision(4) + ")";
             this.mDyePack.setVisibility(true);
