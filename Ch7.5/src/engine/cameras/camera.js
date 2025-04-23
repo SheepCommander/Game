@@ -1,2 +1,2 @@
-import Camera from "./camera_manipulation.js";
+import Camera from "./camera_input.js";
 export default Camera;

@@ -196,6 +196,31 @@ class MyGame extends engine.Scene {
         }
         this.mHeroCam.setViewport(v);
         this.mMsg.setText(msg + this.mChoice);
+
+        msg = "";
+        // testing the mouse input
+        if (engine.input.isButtonPressed(engine.input.eMouseButton.eLeft)) {
+            msg += "[L Down]";
+            if (this.mCamera.isMouseInViewport()) {
+                this.mPortal.getXform().setXPos(this.mCamera.mouseWCX());
+                this.mPortal.getXform().setYPos(this.mCamera.mouseWCY());
+            }
+        }
+        if (engine.input.isButtonPressed(engine.input.eMouseButton.eMiddle)) {
+            if (this.mHeroCam.isMouseInViewport()) {
+                this.mHero.getXform().setXPos(this.mHeroCam.mouseWCX());
+                this.mHero.getXform().setYPos(this.mHeroCam.mouseWCY());
+            }
+        }
+        if (engine.input.isButtonClicked(engine.input.eMouseButton.eRight)) {
+            this.mPortal.setVisibility(false);
+        }
+        if (engine.input.isButtonClicked(engine.input.eMouseButton.eMiddle)) {
+            this.mPortal.setVisibility(true);
+        }
+        msg += " X=" + engine.input.getMousePosX() +
+            " Y=" + engine.input.getMousePosY();
+        this.mMsg.setText(msg);
     }
     _drawCamera(camera) {
         camera.setViewAndCameraMatrix();
