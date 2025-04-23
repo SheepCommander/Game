@@ -6,6 +6,7 @@ import DyePack from "./objects/dye_pack.js";
 import Minion from "./objects/minion.js";
 import Hero from "./objects/hero.js";
 import Brain from "./objects/brain.js";
+import TextureObject from "./objects/texture_object.js";
 
 class MyGame extends engine.Scene {
     constructor() {
@@ -13,43 +14,34 @@ class MyGame extends engine.Scene {
         // textures:
         this.kFontImage = "assets/fonts/system_default_font.png";
         this.kMinionSprite = "assets/minion_sprite.png";
+        this.kMinionCollector = "assets/minion_collector.png";
+        this.kMinionPortal = "assets/minion_portal.png";
         // The camera to view the scene
         this.mCamera = null;
         // the hero and the support objects
-        this.mHero = null;
-        this.mMinionset = null;
         this.mDyePack = null;
         this.mMsg = null;
-        this.mBrain = null;
+        this.mCollector = null;
+        this.mPortal = null;
     }
     init() {
-        // Step A: set up the cameras and set the background to gray
+        // Step A: set up the cameras
         this.mCamera = new engine.Camera(
             vec2.fromValues(50, 37.5), // position of the camera
             100, // width of camera
             [0, 0, 640, 480] // viewport (orgX, orgY, width, height)
         );
         this.mCamera.setBackgroundColor([0.8, 0.8, 0.8, 1]);
-        // Step B: The dye pack: simply another GameObject
+        // sets the background to gray
         this.mDyePack = new DyePack(this.kMinionSprite);
-        // Step C: A set of Minions
-        this.mMinionset = new engine.GameObjectSet();
-        let i = 0, randomY, aMinion;
-        // create 5 minions at random Y values
-        for (i = 0; i < 5; i++) {
-            randomY = Math.random() * 65;
-            aMinion = new Minion(this.kMinionSprite, randomY);
-            this.mMinionset.addToSet(aMinion);
-        }
-        // Step D: Create the hero object
-        this.mHero = new Hero(this.kMinionSprite);
-        // Step E: Create and initialize message output
+        this.mDyePack.setVisibility(false);
+        this.mCollector = new TextureObject(this.kMinionCollector,
+            50, 30, 30, 30);
+        this.mPortal = new TextureObject(this.kMinionPortal, 70, 30, 10, 10);
         this.mMsg = new engine.FontRenderable("Status Message");
         this.mMsg.setColor([0, 0, 0, 1]);
         this.mMsg.getXform().setPosition(1, 2);
         this.mMsg.setTextHeight(3);
-        //
-        this.mBrain = new Brain(this.kMinionSprite);
     }
     draw() {
         // Step A: clear the canvas
@@ -57,57 +49,44 @@ class MyGame extends engine.Scene {
         // Step B: Activate the drawing Camera
         this.mCamera.setViewAndCameraMatrix();
         // Step C: Draw everything
-        this.mHero.draw(this.mCamera);
-        this.mMinionset.draw(this.mCamera);
-        this.mMsg.draw(this.mCamera);
         this.mDyePack.draw(this.mCamera);
-        this.mBrain.draw(this.mCamera);
+        this.mMsg.draw(this.mCamera);
+        this.mCollector.draw(this.mCamera);
+        this.mPortal.draw(this.mCamera);
     }
     load() {
         // Step A: loads the textures
         engine.texture.load(this.kFontImage);
         engine.texture.load(this.kMinionSprite);
+        engine.texture.load(this.kMinionCollector);
+        engine.texture.load(this.kMinionPortal);
     }
     unload() {
         engine.texture.unload(this.kFontImage);
         engine.texture.unload(this.kMinionSprite);
+        engine.texture.unload(this.kMinionCollector);
+        engine.texture.unload(this.kMinionPortal);
     }
     update() {
-        let msg = "Brain [H:keys J:imm K:gradual]: ";
-        let rate = 1;
-        this.mHero.update();
-        switch (this.mMode) {
-            case 'H':
-                this.mBrain.update(); // player steers with arrow keys
-                break;
-            case 'K':
-                rate = 0.02; // gradual rate
-            // In gradual mode, the following should also be executed
-            case 'J':
-                // stop the brain when it touches hero bound
-                let hBbox = this.mHero.getBBox();
-                let bBbox = this.mBrain.getBBox();
-                if (!hBbox.intersectsBound(bBbox)) {
-                    this.mBrain.rotateObjPointTo(
-                        this.mHero.getXform().getPosition(), rate);
-                    // the default GameObject: only move forward
-                    engine.GameObject.prototype.update.call(this.mBrain);
-                    break;
-                }
+        let msg = "No Collision";
+        this.mCollector.update(engine.input.keys.W, engine.input.keys.S,
+            engine.input.keys.A, engine.input.keys.D);
+        this.mPortal.update(engine.input.keys.Up, engine.input.keys.Down,
+            engine.input.keys.Left, engine.input.keys.Right);
+        let h = [];
+        // Portal's resolution is 1/16 x 1/16 that of Collector!
+        // VERY EXPENSIVE!!
+        // if (this.mCollector.pixelTouches(this.mPortal, h)) {
+        if (this.mPortal.pixelTouches(this.mCollector, h)) {
+            msg = "Collided!: (" + h[0].toPrecision(4) + " " +
+                h[1].toPrecision(4) + ")";
+            this.mDyePack.setVisibility(true);
+            this.mDyePack.getXform().setXPos(h[0]);
+            this.mDyePack.getXform().setYPos(h[1]);
+        } else {
+            this.mDyePack.setVisibility(false);
         }
-        // Check for hero going outside 80% of the WC Window bound
-        let status = this.mCamera.collideWCBound(this.mHero.getXform(), 0.8);
-        if (engine.input.isKeyClicked(engine.input.keys.H)) {
-            this.mMode = 'H';
-        }
-        if (engine.input.isKeyClicked(engine.input.keys.J)) {
-            this.mMode = 'J';
-        }
-        if (engine.input.isKeyClicked(engine.input.keys.K)) {
-            this.mMode = 'K';
-        }
-        this.mMsg.setText(msg + this.mMode);
-        this.mMsg.setText(msg + this.mMode + " [Hero bound=" + status + "]");
+        this.mMsg.setText(msg);
     }
     next() {
         super.next(); // this must be called!

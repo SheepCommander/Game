@@ -80,5 +80,22 @@ class GameObject {
             xform.getHeight());
         return b;
     }
+    pixelTouches(otherObj, wcTouchPos) {
+        // only continue if both objects have getColorArray defined
+        // if defined, should have other texture intersection support!
+        let pixelTouch = false;
+        let myRen = this.getRenderable();
+        let otherRen = otherObj.getRenderable();
+        if ((typeof myRen.pixelTouches === "function") &&
+            (typeof otherRen.pixelTouches === "function")) {
+            let otherBbox = otherObj.getBBox();
+            if (otherBbox.intersectsBound(this.getBBox())) {
+                myRen.setColorArray();
+                otherRen.setColorArray();
+                pixelTouch = myRen.pixelTouches(otherRen, wcTouchPos);
+            }
+            return pixelTouch;
+        }
+    }
 }
 export default GameObject;
