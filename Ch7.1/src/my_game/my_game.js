@@ -7,6 +7,7 @@ import Minion from "./objects/minion.js";
 import Hero from "./objects/hero.js";
 import Brain from "./objects/brain.js";
 import TextureObject from "./objects/texture_object.js";
+import TextureRenderable from "../engine/renderables/texture_renderable_main.js";
 
 /**
     WASD keys: Move the Dye character (the Hero object). No,ce that the camera WC window updates to follow
@@ -27,6 +28,7 @@ class MyGame extends engine.Scene {
         this.kFontImage = "assets/fonts/system_default_font.png";
         this.kMinionSprite = "assets/minion_sprite.png";
         this.kMinionPortal = "assets/minion_portal.png";
+        this.kBgImage = "assets/bg.png";
         // The camera to view the scene
         this.mCamera = null;
         // the hero and the support objects
@@ -34,9 +36,10 @@ class MyGame extends engine.Scene {
         this.mDyePack = null;
         this.mPortal = null;
         this.mBrain = null;
-        this.mLeftMinion = null;
-        this.mRightMinion = null;
+        this.mLMinion = null;
+        this.mRMinion = null;
         this.mMsg = null;
+        this.mBg = null;
         // extra
         this.mTarget = null;
     }
@@ -53,12 +56,13 @@ class MyGame extends engine.Scene {
         this.mDyePack.setVisibility(false);
         this.mPortal = new TextureObject(this.kMinionPortal, 70, 30, 10, 10); // portal
         this.mBrain = new Brain(this.kMinionSprite); // brain
-        this.mLeftMinion = new Minion(this.kMinionSprite, 50);
-        this.mRightMinion = new Minion(this.kMinionSprite, 50);
+        this.mLMinion = new Minion(this.kMinionSprite, 50);
+        this.mRMinion = new Minion(this.kMinionSprite, 50);
         this.mMsg = new engine.FontRenderable("Status Message"); // msg
         this.mMsg.setColor([0, 0, 0, 1]);
         this.mMsg.getXform().setPosition(1, 2);
         this.mMsg.setTextHeight(3);
+        this.mBg = new TextureObject(this.kBgImage, 50, 37.5, 100, 100);
 
         this.mTarget = this.mHero;
     }
@@ -68,12 +72,13 @@ class MyGame extends engine.Scene {
         // Step B: Activate the drawing Camera
         this.mCamera.setViewAndCameraMatrix();
         // Step C: Draw everything
-        this.mHero.draw(this.mCamera);
-        this.mDyePack.draw(this.mCamera);
+        this.mBg.draw(this.mCamera);
         this.mPortal.draw(this.mCamera);
         this.mBrain.draw(this.mCamera);
-        this.mLeftMinion.draw(this.mCamera);
-        this.mRightMinion.draw(this.mCamera);
+        this.mLMinion.draw(this.mCamera);
+        this.mRMinion.draw(this.mCamera);
+        this.mHero.draw(this.mCamera);
+        this.mDyePack.draw(this.mCamera);
         this.mMsg.draw(this.mCamera);
     }
     load() {
@@ -81,50 +86,73 @@ class MyGame extends engine.Scene {
         engine.texture.load(this.kFontImage);
         engine.texture.load(this.kMinionSprite);
         engine.texture.load(this.kMinionPortal);
+        engine.texture.load(this.kBgImage);
     }
     unload() {
         engine.texture.unload(this.kFontImage);
         engine.texture.unload(this.kMinionSprite);
         engine.texture.unload(this.kMinionPortal);
+        engine.texture.unload(this.kBgImage);
     }
     update() {
-        let msg = "No Collision";
-        this.mPortal.update(engine.input.keys.Up, engine.input.keys.Down,
-            engine.input.keys.Left, engine.input.keys.Right);
-        this.mHero.update(engine.input.keys.W, engine.input.keys.S,
-            engine.input.keys.A, engine.input.keys.D);
-        this.mLeftMinion.update();
-        this.mRightMinion.update();
+        this.mHero.update();
+        this.mLMinion.update();
+        this.mRMinion.update();
         this.mBrain.update();
-        // rotate smaller Portal minion with P
-        if (engine.input.isKeyClicked(engine.input.keys.P)) {
-            this.mPortal.getXform().incRotationByDegree(5);
+
+        let zoomDelta = 0.05;
+        let msg = "L/R: Left or Right Minion; H: Dye; P: Portal]: ";
+        // ... code to update each object not shown
+        // Brain chasing the hero
+        let h = [];
+        if (!this.mHero.pixelTouches(this.mBrain, h)) {
+            this.mBrain.rotateObjPointTo(
+                this.mHero.getXform().getPosition(), 0.01);
+            engine.GameObject.prototype.update.call(this.mBrain);
         }
-        // L, R, H, B keys: Select the target for colliding with the Portal minion
+        // Pan camera to object
         if (engine.input.isKeyClicked(engine.input.keys.L)) {
-            this.mTarget = this.mLeftMinion;
+            this.mFocusObj = this.mLMinion;
+            this.mChoice = 'L';
+            this.mCamera.panTo(this.mLMinion.getXform().getXPos(),
+                this.mLMinion.getXform().getYPos());
         }
         if (engine.input.isKeyClicked(engine.input.keys.R)) {
-            this.mTarget = this.mRightMinion;
+            this.mFocusObj = this.mRMinion;
+            this.mChoice = 'R';
+            this.mCamera.panTo(this.mRMinion.getXform().getXPos(),
+                this.mRMinion.getXform().getYPos());
+        }
+        if (engine.input.isKeyClicked(engine.input.keys.P)) {
+            this.mFocusObj = this.mPortal;
+            this.mChoice = 'P';
         }
         if (engine.input.isKeyClicked(engine.input.keys.H)) {
-            this.mTarget = this.mHero;
+            this.mFocusObj = this.mHero;
+            this.mChoice = 'H';
         }
-        if (engine.input.isKeyClicked(engine.input.keys.B)) {
-            this.mTarget = this.mBrain;
+        // zoom
+        if (engine.input.isKeyClicked(engine.input.keys.N)) {
+            this.mCamera.zoomBy(1 - zoomDelta);
         }
-
-        let h = [];
-        if (this.mPortal.pixelTouches(this.mTarget, h)) {
-            msg = "Collided!: (" + h[0].toPrecision(4) + " " +
-                h[1].toPrecision(4) + ")";
-            this.mDyePack.setVisibility(true);
-            this.mDyePack.getXform().setXPos(h[0]);
-            this.mDyePack.getXform().setYPos(h[1]);
-        } else {
-            this.mDyePack.setVisibility(false);
+        if (engine.input.isKeyClicked(engine.input.keys.M)) {
+            this.mCamera.zoomBy(1 + zoomDelta);
         }
-        this.mMsg.setText(msg);
+        if (engine.input.isKeyClicked(engine.input.keys.J)) {
+            this.mCamera.zoomTowards(
+                this.mFocusObj.getXform().getPosition(),
+                1 - zoomDelta);
+        }
+        if (engine.input.isKeyClicked(engine.input.keys.K)) {
+            this.mCamera.zoomTowards(
+                this.mFocusObj.getXform().getPosition(),
+                1 + zoomDelta);
+        }
+        // interaction with the WC bound
+        this.mCamera.clampAtBoundary(this.mBrain.getXform(), 0.9);
+        this.mCamera.clampAtBoundary(this.mPortal.getXform(), 0.8);
+        this.mCamera.panWith(this.mHero.getXform(), 0.9);
+        this.mMsg.setText(msg + this.mChoice);
     }
     next() {
         super.next(); // this must be called!

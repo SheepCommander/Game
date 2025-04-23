@@ -25,4 +25,28 @@ Camera.prototype.panWith = function (aXform, zone) {
     }
 }
 
+Camera.prototype.panBy = function (dx, dy) {
+    this.mWCCenter[0] += dx;
+    this.mWCCenter[1] += dy;
+}
+Camera.prototype.panTo = function (cx, cy) {
+    this.setWCCenter(cx, cy);
+}
+/**
+ * Zooms into the WC center for vals <1, zooms out for vals >1
+ * @param {number} zoom 0.5 = zoom to 1/2 of og size.
+ */
+Camera.prototype.zoomBy = function (zoom) {
+    if (zoom > 0) {
+        this.setWCWidth(this.getWCWidth() * zoom);
+    }
+}
+Camera.prototype.zoomTowards = function (pos, zoom) {
+    let delta = [];
+    vec2.sub(delta, pos, this.mWCCenter);
+    vec2.scale(delta, delta, zoom - 1);
+    vec2.sub(this.mWCCenter, this.mWCCenter, delta);
+    this.zoomBy(zoom);
+}
+
 export default Camera;
