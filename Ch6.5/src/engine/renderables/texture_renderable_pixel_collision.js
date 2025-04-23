@@ -31,14 +31,16 @@ TextureRenderable.prototype._indexToWCPosition =
     }
 
 TextureRenderable.prototype._wcPositionToIndex =
-    function (returnIndex, wcPos) {
+    function (returnIndex, wcPos, xDir, yDir) {
         // use wcPos to compute the corresponding returnIndex[0 and 1]
         let delta = [];
         vec2.sub(delta, wcPos, this.mXform.getPosition());
+        let xDisp = vec2.dot(delta, xDir);
+        let yDisp = vec2.dot(delta, yDir);
         returnIndex[0] = this.mElmWidthPixels *
-            (delta[0] / this.mXform.getWidth());
+            (xDisp / this.mXform.getWidth());
         returnIndex[1] = this.mElmHeightPixels *
-            (delta[1] / this.mXform.getHeight());
+            (yDisp / this.mXform.getHeight());
         // recall that xForm.getPosition() returns center, yet
         // Texture origin is at lower-left corner!
         returnIndex[0] += this.mElmWidthPixels / 2;
@@ -52,12 +54,22 @@ TextureRenderable.prototype.pixelTouches = function (other, wcTouchPos) {
     let pixelTouch = false;
     let xIndex = 0, yIndex;
     let otherIndex = [0, 0];
+    let xDir = [1, 0];
+    let yDir = [0, 1];
+    let otherXDir = [1, 0];
+    let otherYDir = [0, 1];
+    vec2.rotate(xDir, xDir, this.mXform.getRotationInRad());
+    vec2.rotate(yDir, yDir, this.mXform.getRotationInRad());
+    vec2.rotate(otherXDir, otherXDir, other.mXform.getRotationInRad());
+    vec2.rotate(otherYDir, otherYDir, other.mXform.getRotationInRad());
     while ((!pixelTouch) && (xIndex < this.mElmWidthPixels)) {
         yIndex = 0;
         while ((!pixelTouch) && (yIndex < this.mElmHeightPixels)) {
             if (this._pixelAlphaValue(xIndex, yIndex) > 0) {
-                this._indexToWCPosition(wcTouchPos, xIndex, yIndex);
-                other._wcPositionToIndex(otherIndex, wcTouchPos);
+                this._indexToWCPosition(wcTouchPos,
+                    xIndex, yIndex, xDir, yDir);
+                other._wcPositionToIndex(otherIndex, wcTouchPos,
+                    otherXDir, otherYDir);
                 if ((otherIndex[0] >= 0) &&
                     (otherIndex[0] < other.mElmWidthPixels) &&
                     (otherIndex[1] >= 0) &&

@@ -88,14 +88,35 @@ class GameObject {
         let otherRen = otherObj.getRenderable();
         if ((typeof myRen.pixelTouches === "function") &&
             (typeof otherRen.pixelTouches === "function")) {
-            let otherBbox = otherObj.getBBox();
-            if (otherBbox.intersectsBound(this.getBBox())) {
-                myRen.setColorArray();
-                otherRen.setColorArray();
-                pixelTouch = myRen.pixelTouches(otherRen, wcTouchPos);
+            if ((myRen.getXform().getRotationInRad() === 0) &&
+                (otherRen.getXform().getRotationInRad() === 0)) {
+                // no rotation, we can use bbox..
+                let otherBbox = otherObj.getBBox();
+                if (otherBbox.intersectsBound(this.getBBox())) {
+                    myRen.setColorArray();
+                    otherRen.setColorArray();
+                    pixelTouch = myRen.pixelTouches(otherRen, wcTouchPos);
+                }
+            } else {
+                // One or both are rotated, compute an encompassing circle
+                // by using the hypotenuse as radius
+                let mySize = myRen.getXform().getSize();
+                let otherSize = otherRen.getXform().getSize();
+                let myR = Math.sqrt(0.5 * mySize[0] * 0.5 * mySize[0] +
+                    0.5 * mySize[1] * 0.5 * mySize[1]);
+                let otherR = Math.sqrt(0.5 * otherSize[0] * 0.5 * otherSize[0] +
+                    0.5 * otherSize[1] * 0.5 * otherSize[1]);
+                let d = [];
+                vec2.sub(d, myRen.getXform().getPosition(),
+                    otherRen.getXform().getPosition());
+                if (vec2.length(d) < (myR + otherR)) {
+                    myRen.setColorArray();
+                    otherRen.setColorArray();
+                    pixelTouch = myRen.pixelTouches(otherRen, wcTouchPos);
+                }
             }
-            return pixelTouch;
         }
+        return pixelTouch;
     }
 }
 export default GameObject;

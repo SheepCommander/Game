@@ -73,6 +73,15 @@ class MyGame extends engine.Scene {
             engine.input.keys.A, engine.input.keys.D);
         this.mPortal.update(engine.input.keys.Up, engine.input.keys.Down,
             engine.input.keys.Left, engine.input.keys.Right);
+        // rotate smaller Portal minion with P
+        if (engine.input.isKeyClicked(engine.input.keys.P)) {
+            this.mPortal.getXform().incRotationByDegree(5);
+        }
+        // rotate bigger Collector minion with E
+        if (engine.input.isKeyClicked(engine.input.keys.E)) {
+            this.mCollector.getXform().incRotationByDegree(5);
+        }
+
         let h = [];
         // Portal's resolution is 1/16 x 1/16 that of Collector!
         // VERY EXPENSIVE!!
