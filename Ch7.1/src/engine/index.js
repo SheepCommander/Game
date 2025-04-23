@@ -15,7 +15,7 @@ import * as defaultResources from "./resources/default_resources.js";
 // input
 import * as input from "./input.js";
 // general utilities
-import Camera from "./camera.js";
+import Camera from "./cameras/camera.js";
 import Transform from "./transform.js";
 import Scene from "./scene.js";
 // Renderables

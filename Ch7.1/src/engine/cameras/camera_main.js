@@ -1,6 +1,7 @@
 "use strict";
 import * as glSys from "./core/gl.js";
 import BoundingBox from "./bounding_box.js"
+import { eBoundCollideStatus } from "../bounding_box.js";
 
 class Camera {
     /**
@@ -62,10 +63,8 @@ class Camera {
             vec3.fromValues(-center[0], -center[1], 0));
     }
     /**
-     * 
      * @param {*} aXform 
      * @param {float} zone 0.8 = 80% of current WC size
-     * @returns 
      */
     collideWCBound(aXform, zone) {
         let bbox = new BoundingBox(
@@ -76,6 +75,33 @@ class Camera {
         let h = zone * this.getWCHeight();
         let cameraBound = new BoundingBox(this.getWCCenter(), w, h);
         return cameraBound.boundCollideStatus(bbox);
+    }
+    clampAtBoundary(aXform, zone) {
+        let status = this.collideWCBound(aXform, zone);
+        if (status !== eBoundCollideStatus.eInside) {
+            let pos = aXform.getPosition();
+            if ((status & eBoundCollideStatus.eCollideTop) !== 0) {
+                pos[1] = (this.getWCCenter())[1] +
+                    (zone * this.getWCHeight() / 2) –
+                (aXform.getHeight() / 2);
+            }
+            if ((status & eBoundCollideStatus.eCollideBottom) !== 0) {
+                pos[1] = (this.getWCCenter())[1] –
+                (zone * this.getWCHeight() / 2) +
+                    (aXform.getHeight() / 2);
+            }
+            if ((status & eBoundCollideStatus.eCollideRight) !== 0) {
+                pos[0] = (this.getWCCenter())[0] +
+                    (zone * this.getWCWidth() / 2) –
+                (aXform.getWidth() / 2);
+            }
+            if ((status & eBoundCollideStatus.eCollideLeft) !== 0) {
+                pos[0] = (this.getWCCenter())[0] –
+                (zone * this.getWCWidth() / 2) +
+                    (aXform.getWidth() / 2);
+            }
+        }
+        return status;
     }
 
     // Getters Setters
